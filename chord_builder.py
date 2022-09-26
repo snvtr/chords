@@ -105,18 +105,7 @@ class Tab(object):
             types['V']   = self.type_V(intervals)
             types['III'] = self.type_III(intervals)
             chord_name += types['III']
-            if   types['V'] == 'D5':
-                # D5
-                chord_name += ''
-            elif types['V'] == 'Dim5':
-                # Dim5
-                chord_name += '/dim'
-            elif types['V'] == 'Aug5':
-                # Aug5
-                chord_name += '/aug5'
-            else:
-                # No5
-                chord_name += '(No5)'
+            chord_name += types['V']
             chord_name += self.is_7(intervals, types)
             chord_name += self.is_9(intervals, types)
             chord_name += self.is_11(intervals, types)
@@ -128,13 +117,13 @@ class Tab(object):
         ''' возвращает тип по ступени V - доминантный, уменьшенный, увеличенный '''
         if 3.5 in intervals and (3.0 not in intervals or 4.0 not in intervals):
             intervals.remove(3.5)
-            return 'D5'
+            return ''
         if 3.0 in intervals and (3.5 not in intervals or 4.0 not in intervals):
             intervals.remove(3.0)
-            return 'Dim5'
+            return '/dim5'
         if 4.0 in intervals and (3.0 not in intervals or 3.5 not in intervals):
             intervals.remove(4.0)
-            return 'Aug5'
+            return '/aug5'
         return '(No5)'
 
     def type_III(self, intervals):
