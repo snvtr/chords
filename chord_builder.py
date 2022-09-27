@@ -185,9 +185,8 @@ class Tab(object):
         return ''
 
 
-
 if __name__ == '__main__':
     tab = Tab()
     tab.read_frets()
     tab.draw_frets()
-    print('\n', tab.build_intervals())
+    print("\n", tab.build_intervals())
