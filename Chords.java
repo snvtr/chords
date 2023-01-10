@@ -1,26 +1,155 @@
-//import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 
 public class Chords {
+    int[][] STRINGS = new int[][] {
+        {20, 25, 30, 35, 40, 45, -1},
+        {55, 0,   5, 10, 15, 20, -1},
+        {35, 40, 45, 50, 55,  0, -1},
+        {10, 15, 20, 25, 30, 35, -1},
+        {45, 50, 55, 0,   5, 10, -1},
+        {20, 25, 30, 35, 40, 45, -1}
+    };
 
-    int[] chordStruct = new int[6];
-    int[] notes = new int[] {0, 20, 35, 20, 35, -1};
-    String[] chordNames = new String[6];
-    
-    public Chords () {
-        //;
+    String[][] FRETS = new String[][] {
+            {"E", "F", "F#", "G", "G#", "A", "x"},
+            {"B", "C", "C#", "D", "D#", "E", "x"},
+            {"G", "G#", "A", "A#", "B", "C", "x"},
+            {"D", "D#", "E", "F", "F#", "G", "x"},
+            {"A", "A#", "B", "C", "C#", "D", "x"},
+            {"E", "F", "F#", "G", "G#", "A", "x"}
+    };
+
+    private int[] fretNums = new int[6];
+    private int[] fretNote = new int[6];
+    private String[] chordNames = new String[6]; 
+
+    public int readFrets() throws IOException {
+        // reads the chord's frets from stdin
+        int STR_NUM = 6;
+        int i = 1;
+        int r;
+        System.out.println("Enter frets for the strings. 'x' means the string does not sound.");
+        System.out.print("Fret #" + i + ": ");
+        do {
+            r = System.in.read();
+            if (r > 32) {
+                if (r == 120) {
+                    System.out.println(" Got 'x'");
+                    fretNums[i-1] = 6;
+                    i++;
+                } else if ((r-'0' <= 5) && (r-'0' >= 0)) {
+                    //System.out.println("Got " + String.valueOf(r));
+                    fretNums[i-1] = r - '0';
+                    i++;
+                } else {
+                    System.out.println("Fret number should be between 0 and 5. Please enter the correct value.");
+                }
+                if (i <= 6) {
+                    System.out.print("Fret #" + i + ": ");
+                }
+            }
+
+        } while (i <= STR_NUM);
+
+        //for (int j = 1; j <= 6; j++) {
+        //    System.out.println("Fret: " + j + ", Note: " + FRETS[j-1][fretNums[j-1]]);
+        //}
+
+        return 0;
+    }
+
+    public int drawFrets() {
+        // draws the chord
+        String chordLine;
+        System.out.println("");
+
+        for (int j = 1; j <= 6; j++) {
+            chordLine = fretNums[j-1] + "|";
+            if (fretNums[j-1] == 6) {
+                chordLine = "X|---|---|---|---|---|";
+            } else if (fretNums[j-1] == 0) {
+                chordLine = "o|---|---|---|---|---|";
+            } else {
+                for (int k = 1; k < 6; k++) {
+                    if (k == fretNums[j-1]) {
+                        chordLine = chordLine + "-o-|";
+                    } else {
+                        chordLine = chordLine + "---|";
+                    }
+                }
+            }
+            System.out.println(chordLine + "-");
+        }
+        return 0;
+    }
+
+    public void fillNotes() {
+        // fills the fretNote structure with notes' int representations
+        for (int i = 0; i < 6; i++) {
+            this.fretNote[i] = this.STRINGS[i][fretNums[i]]; 
+        }
+        //for (int i: this.fretNote) {
+        //    System.out.println("Note "+i);
+        //}
     }
 
     public void buildChords() {
-    // iterates thru strings
+    // iterates thru strings and builds chords for each string as a root
         int i;
+        String chordName;
+        ArrayList<String> chordNames = new ArrayList<String>();
 
         for (i = 0; i < 6; i++) {
-            System.out.println(this.calcChord(i));
+            chordName = this.calcChord(i);
+            if (!chordNames.contains(chordName)) {
+                chordNames.add(chordName);
+            }
         }
-
+        System.out.println("\nPossible chords are:");
+        for (String s: chordNames) {
+            if (s.indexOf("(Oops)") < 0) {
+                System.out.println(s);
+            }    
+        }
+        System.out.println("");
+        
     }
 
+    public String calcChord(int strNum) {
+        // fills chordNames[strNum] field
+        int i;
+        int root = this.fretNote[strNum];
+        int[] intervals = new int[6];
+
+        for (i = 0; i < 6; i++) {
+            if (root == -1) {
+                intervals[i] = -1;
+                continue;
+            }
+            if (this.fretNote[i] != -1) {
+                intervals[i] = this.fretNote[i] - root;
+            } else {
+                intervals[i] = -1;
+            }
+            if (intervals[i] < -1) {
+                intervals[i] += 60;
+            }
+        }
+        //System.out.println("Intervals:"+intervals[0]+","+intervals[1]+","+intervals[2]+","+intervals[3]+","+intervals[4]+","+intervals[5]+".");
+
+        this.chordNames[0] = this.is3(intervals);
+        this.chordNames[1] = this.is5(intervals);
+        this.chordNames[2] = this.is7(intervals);
+        this.chordNames[3] = this.is9(intervals);
+        this.chordNames[4] = this.is11(intervals);
+        this.chordNames[5] = this.is6(intervals);
+
+        return this.convRoot2Note(root)+this.chordNames[0]+this.chordNames[1]+this.chordNames[2]+this.chordNames[3]+this.chordNames[4]+this.chordNames[5];
+
+    }
     public String convRoot2Note(int root) {
+        // converts int into the symbol
         switch (root) {
             case 0:  return "C";
             case 5:  return "C#";
@@ -38,41 +167,8 @@ public class Chords {
         }
     }
 
-    public String calcChord(int strNum) {
-        // fills chordNames[strNum] field
-
-        int i;
-        int root = this.notes[strNum];
-        int[] intervals = new int[6];
-
-        for (i = 0; i < 6; i++) {
-            if (root == -1) {
-                intervals[i] = -1;
-                continue;
-            }
-            if (notes[i] != -1) {
-                intervals[i] = notes[i] - root;
-            } else {
-                intervals[i] = -1;
-            }
-            if (intervals[i] < -1) {
-                intervals[i] += 60;
-            }
-        }
-        System.out.println("Intervals:"+intervals[0]+","+intervals[1]+","+intervals[2]+","+intervals[3]+","+intervals[4]+","+intervals[5]+".");
-
-        this.chordNames[0] = this.is3(intervals);
-        this.chordNames[1] = this.is5(intervals);
-        this.chordNames[2] = this.is7(intervals);
-        this.chordNames[3] = this.is9(intervals);
-        this.chordNames[4] = this.is11(intervals);
-        this.chordNames[5] = this.is6(intervals);
-
-        return this.convRoot2Note(root)+this.chordNames[0]+this.chordNames[1]+this.chordNames[2]+this.chordNames[3]+this.chordNames[4]+this.chordNames[5];
-
-    }
-
     public boolean isInArray(int[] intervals, int interval) {
+        // checks if an interval is present in the intervals array
         for (int i = 0; i < 6; i++) {
             if (interval == intervals[i]) {
                 return true;
