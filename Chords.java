@@ -10,7 +10,7 @@ public class Chords {
         {45, 50, 55, 0,   5, 10, -1},
         {20, 25, 30, 35, 40, 45, -1}
     };
-
+/* 
     String[][] FRETS = new String[][] {
             {"E", "F", "F#", "G", "G#", "A", "x"},
             {"B", "C", "C#", "D", "D#", "E", "x"},
@@ -19,7 +19,7 @@ public class Chords {
             {"A", "A#", "B", "C", "C#", "D", "x"},
             {"E", "F", "F#", "G", "G#", "A", "x"}
     };
-
+*/
     private int[] fretNums = new int[6];
     private int[] fretNote = new int[6];
     private String[] chordNames = new String[6]; 
