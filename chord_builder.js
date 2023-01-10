@@ -1,5 +1,7 @@
 "use strict";
 
+// it runs on windows scripting host.
+
 var STRINGS = new Array(6);
 for (var i = 0; i < 6; i++) {
     STRINGS[i] = new Array(6);
