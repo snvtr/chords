@@ -98,16 +98,16 @@ public class Chords {
     // iterates thru strings and builds chords for each string as a root
         int i;
         String chordName;
-        ArrayList<String> chordNames = new ArrayList<String>();
+        ArrayList<String> chordNamesList = new ArrayList<String>();
 
         for (i = 0; i < 6; i++) {
             chordName = this.calcChord(i);
-            if (!chordNames.contains(chordName)) {
-                chordNames.add(chordName);
+            if (!chordNamesList.contains(chordName)) {
+                chordNamesList.add(chordName);
             }
         }
         System.out.println("\nPossible chords are:");
-        for (String s: chordNames) {
+        for (String s: chordNamesList) {
             if (s.indexOf("(Oops)") < 0) {
                 System.out.println(s);
             }    
