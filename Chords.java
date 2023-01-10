@@ -29,7 +29,7 @@ public class Chords {
         int STR_NUM = 6;
         int i = 1;
         int r;
-        System.out.println("Enter frets for the strings. 'x' means the string does not sound.");
+        System.out.println("Enter frets for the strings. 'x' means the string is muted.");
         System.out.print("Fret #" + i + ": ");
         do {
             r = System.in.read();
