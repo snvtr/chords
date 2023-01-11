@@ -1,5 +1,5 @@
 from sys import stdin
-from pprint import pprint
+#from pprint import pprint
 from os import system
 
 class Tab(object):

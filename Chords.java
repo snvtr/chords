@@ -35,7 +35,7 @@ public class Chords {
             r = System.in.read();
             if (r > 32) {
                 if (r == 120) {
-                    System.out.println(" Got 'x'");
+                    //System.out.println(" Got 'x'");
                     fretNums[i-1] = 6;
                     i++;
                 } else if ((r-'0' <= 5) && (r-'0' >= 0)) {
@@ -62,14 +62,15 @@ public class Chords {
     public int drawFrets() {
         // draws the chord
         String chordLine;
+        String note;
         System.out.println("");
 
         for (int j = 1; j <= 6; j++) {
-            chordLine = fretNums[j-1] + "|";
+            chordLine = fretNums[j-1] + "||";
             if (fretNums[j-1] == 6) {
-                chordLine = "X|---|---|---|---|---|";
+                chordLine = "X||---|---|---|---|---|";
             } else if (fretNums[j-1] == 0) {
-                chordLine = "o|---|---|---|---|---|";
+                chordLine = "o||---|---|---|---|---|";
             } else {
                 for (int k = 1; k < 6; k++) {
                     if (k == fretNums[j-1]) {
@@ -79,7 +80,11 @@ public class Chords {
                     }
                 }
             }
-            System.out.println(chordLine + "-");
+            note = this.convRoot2Note(STRINGS[j-1][fretNums[j-1]]);
+            if (note == "(Oops)") {
+                note = "x";
+            }
+            System.out.println(chordLine + "- " + note);
         }
         return 0;
     }
@@ -179,14 +184,14 @@ public class Chords {
 
     public String is3(int[] intervals) {
         if ((isInArray(intervals, 20) == true) 
-        && (isInArray(intervals, 10) == false) 
+        //&& (isInArray(intervals, 10) == false) 
         && (isInArray(intervals, 15) == false)
         && (isInArray(intervals, 25) == false)
         ) {
             return ""; // major
         }
         if ((isInArray(intervals, 15) == true) 
-        && (isInArray(intervals, 10) == false) 
+        //&& (isInArray(intervals, 10) == false) 
         && (isInArray(intervals, 20) == false)
         && (isInArray(intervals, 25) == false)
         ) {
