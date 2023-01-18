@@ -142,122 +142,105 @@ function isInArray(array, interval_value) {
 }
 
 function buildChords(intervals, frets) {
-    var interval_set;
-    var chord_name;
+    var iSet, chordName;
     var chords = new Array();
-    var chord_types = new Object();
-    chord_types = ({"II":  "",
-                    "III": "",
-                    "IV":  "",
-                    "V":   "",
-                    "VI":  "",
-                    "VII": ""});
+    var chordTypes = new Object();
+    chordTypes = ({"II":  "",
+                   "III": "",
+                   "IV":  "",
+                   "V":   "",
+                   "VI":  "",
+                   "VII": ""});
     for (var i = 0; i < 6; i++) {
-        interval_set = intervals[i].sort();
-        chord_name = FRETS[i][frets[i]];
-        //alert(chord_name);
-        chord_types["III"] = type_III(interval_set);
-        chord_types["V"]   = type_V(interval_set);
-        chord_types["VII"] = is_7(interval_set, chord_types);
-        chord_types["VI"]  = is_6(interval_set, chord_types);
-        chord_types["II"]  = is_9(interval_set, chord_types);
-        chord_types["IV"]  = is_11(interval_set, chord_types);
+        iSet = intervals[i].sort();
+        chordName = FRETS[i][frets[i]];
+        //for (var j = 0; j < iSet.length; j++) { alert(iSet); }    
+        chordTypes["III"] = is_3(iSet);
+        chordTypes["V"]   = is_5(iSet);
+        chordTypes["VII"] = is_7(iSet);
+        chordTypes["VI"]  = is_6(iSet, chordTypes);
+        chordTypes["II"]  = is_9(iSet, chordTypes);
+        chordTypes["IV"]  = is_11(iSet, chordTypes);
 
-        chord_name += chord_types["III"] 
-                    + chord_types["V"] 
-                    + chord_types["VII"]
-                    + chord_types["VI"]
-                    + chord_types["II"]
-                    + chord_types["IV"];
-        chords.push(chord_name);
+        chordName += chordTypes["III"] 
+                   + chordTypes["V"] 
+                   + chordTypes["VII"]
+                   + chordTypes["VI"]
+                   + chordTypes["II"]
+                   + chordTypes["IV"];
+        chords.push(chordName);
     }
     return chords;
 }
 
-function type_V(interval_set) {
-    if ((isInArray(interval_set, 3.5) == true) 
-            && (isInArray(interval_set, 3.0) == false) 
-            && (isInArray(interval_set, 4.0) == false)) {
+function is_5(iSet) {
+    if ((isInArray(iSet, 3.5) == true) && (isInArray(iSet, 3.0) == false) && (isInArray(iSet, 4.0) == false)) {
         return "";
     }
-    if ((isInArray(interval_set, 3.0) == true) 
-            && (isInArray(interval_set, 3.5) == false) 
-            && (isInArray(interval_set, 4.0) == false)) {
+    if ((isInArray(iSet, 3.0) == true) && (isInArray(iSet, 3.5) == false) && (isInArray(iSet, 4.0) == false)) {
         return "dim5";
     }
-    if ((isInArray(interval_set, 4.0) == true) 
-            && (isInArray(interval_set, 3.0) == false) 
-            && (isInArray(interval_set, 3.5) == false)) {
+    if ((isInArray(iSet, 4.0) == true) && (isInArray(iSet, 3.0) == false) && (isInArray(iSet, 3.5) == false)) {
         return "aug5";
     }
     return "(No5)";
 }
 
-function type_III(interval_set) {
-    if ((isInArray(interval_set, 2.0) == true) 
-            && (isInArray(interval_set, 1.0) == false) 
-            && (isInArray(interval_set, 1.5) == false)
-            && (isInArray(interval_set, 2.5) == false)
-            ) {
+function is_3(iSet) {
+    if ((isInArray(iSet, 2.0) == true) && (isInArray(iSet, 1.5) == false) && (isInArray(iSet, 2.5) == false)) { //&& (isInArray(iSet, 1.0) == false) 
         return ""; // major
     }
-    if ((isInArray(interval_set, 1.5) == true) 
-            && (isInArray(interval_set, 1.0) == false) 
-            && (isInArray(interval_set, 2.0) == false)
-            && (isInArray(interval_set, 2.5) == false)
-            ) {
+    if ((isInArray(iSet, 1.5) == true) && (isInArray(iSet, 2.0) == false) && (isInArray(iSet, 2.5) == false)) { //&& (isInArray(iSet, 1.0) == false) 
         return "m"; // minor
     }
-    if ((isInArray(interval_set, 1.0) == true) 
-            && (isInArray(interval_set, 1.5) == false) 
-            && (isInArray(interval_set, 2.0) == false)
-            && (isInArray(interval_set, 2.5) == false)
-            ) {
+    if ((isInArray(iSet, 1.0) == true) && (isInArray(iSet, 1.5) == false) && (isInArray(iSet, 2.0) == false) && (isInArray(iSet, 2.5) == false)) {
         return "sus2";
-   }
-   if ((isInArray(interval_set, 2.5) == true) 
-           && (isInArray(interval_set, 1.0) == false) 
-           && (isInArray(interval_set, 2.0) == false)
-           && (isInArray(interval_set, 1.5) == false)
-           ) {
+    }
+    if ((isInArray(iSet, 2.5) == true) && (isInArray(iSet, 1.0) == false) && (isInArray(iSet, 2.0) == false) && (isInArray(iSet, 1.5) == false)) {
         return "sus4";
     }
     return "(No3)";
 }
 
-function is_7(interval_set, chord_types) {
-    if (isInArray(interval_set, 4.5) == true) {
+function is_7(iSet) {
+    if (isInArray(iSet, 4.5) == true) {
         return "/b7";
     }
-    if (isInArray(interval_set, 5.0) == true) {
+    if (isInArray(iSet, 5.0) == true) {
         return "/7";
     }
-    if (isInArray(interval_set, 5.5) == true) {
+    if (isInArray(iSet, 5.5) == true) {
         return "/maj7";
     }
     return "";
 }
 
-function is_9(interval_set, chord_types) {
-    if (isInArray(interval_set, 0.5) == true) {
+function is_9(iSet, chordTypes) {
+    if (isInArray(iSet, 0.5) == true) {
         return "/b9";
     }
-    if ((isInArray(interval_set, 1.0) == true) && (chord_types["III"] != "sus2")) {
-        return "/9";
+    if (isInArray(iSet, 1.0) == true) {
+        if (chordTypes["III"].search(/sus2/) < 0) {
+            return "/9";
+        }
     }
     return "";
 }
 
-function is_6(interval_set, chord_types) {
-    if ((isInArray(interval_set, 4.0) == true) && (chord_types["V"] != "aug5")) {
-        return "/6";
+function is_6(iSet, chordTypes) {
+    if (isInArray(iSet, 4.0) == true) {
+        if (chordTypes["V"].search(/aug5/) < 0) {
+            return "/6";
+        }
     }
     return "";
 }
 
-function is_11(interval_set, chord_types) {
-    if ((isInArray(interval_set, 2.5) == true) && (chord_types["III"] != "sus4")) {
-        return "/11";
+function is_11(iSet, chordTypes) {
+    if (isInArray(iSet, 2.5) == true) {
+        if (chordTypes["III"].search(/sus4/) < 0) {
+            return "/11";
+        }
     }
     return "";
 }

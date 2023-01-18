@@ -60,7 +60,7 @@ class Tab(object):
         #pprint(self.frets)
 
     def draw_frets(self):
-        system('cls')
+        #system('cls')
         print('')
         for i in range(1, 7):
             if self.frets[i] == -1:
