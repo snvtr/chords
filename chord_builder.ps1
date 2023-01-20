@@ -6,7 +6,7 @@ $notes[3] = @(10,15,20,25,30,35,-1)
 $notes[4] = @(45,50,55, 0, 5,10,-1)
 $notes[5] = @(20,25,30,35,40,45,-1)
 
-Function readFrets() {
+Function Read-Frets() {
     $frets = @()
     $i = 0
     while ($i -lt 6) {
@@ -24,7 +24,7 @@ Function readFrets() {
     return $frets
 }
 
-Function getNote($note_no) {
+Function Get-Note($note_no) {
     Switch ($note_no) {
         0 { return "C"  }
         5 { return "C#" }
@@ -43,7 +43,7 @@ Function getNote($note_no) {
     }
 }
 
-Function fillFretNotes($frets) {
+Function Fill-FretNotes($frets) {
     $numNotes = @()
     for ($i = 0; $i -lt 6; $i++) {
         if ($frets[$i] -ne -1) {
@@ -55,12 +55,12 @@ Function fillFretNotes($frets) {
     return $numNotes
 }
 
-Function buildIntervals() {
+Function Build-Intervals($numNotes, $root) {
     
-    param (
-        $numNotes,
-        $root
-    )
+    #param (
+    #    $numNotes,
+    #    $root
+    #)
 
     #Write-Host "Root:" $root "numNotes:" $numNotes
     $intervals = @()
@@ -76,10 +76,10 @@ Function buildIntervals() {
         }    
     }
     #Write-Host "Intervals:" $intervals
-    return $intervals
+    return ($intervals | Sort-Object | Get-Unique)
 }
 
-Function drawFrets() {
+Function Draw-Frets() {
 
     Write-Output "`n"
     for ($i = 0; $i -lt 6; $i++) {
@@ -97,13 +97,13 @@ Function drawFrets() {
         }
         # something wrong here. could not compress these four lines into one:
         $m = $notes[$i][$frets[$i]]
-        $n = getNote($m)
+        $n = Get-Note($m)
         $out = $out + "- " + $n
         Write-Output $out
     }
 }
 
-Function isInArray($array, $interval_value) {
+Function Is-InArray($array, $interval_value) {
     for ($i = 0; $i -lt 6; $i++) {
         if ($array[$i] -eq $interval_value) {
             return $true
@@ -112,64 +112,64 @@ Function isInArray($array, $interval_value) {
     return $false
 }
 
-Function buildChord($intervals) {
+Function Build-Chord($intervals) {
     $chord = ""
-    $chord += is3 $intervals
-    $chord += is5 $intervals
-    $chord += is7 $intervals
-    $chord += is9 $intervals $chord
-    $chord += is11 $intervals $chord
-    $chord += is6 $intervals $chord
+    $chord += Is-3 $intervals
+    $chord += Is-5 $intervals
+    $chord += Is-7 $intervals
+    $chord += Is-9 $intervals $chord
+    $chord += Is-11 $intervals $chord
+    $chord += Is-6 $intervals $chord
     return $chord    
 }
 
-Function is3($intervals) {
-    if (isInArray $intervals 20 -eq $true -and isInArray $intervals 15 -eq $false -and isInArray $intervals 25 -eq $false) {
+Function Is-3($intervals) {
+    if (Is-InArray $intervals 20 -eq $true -and Is-InArray $intervals 15 -eq $false -and Is-InArray $intervals 25 -eq $false) {
         return "" # major
     }
-    if (isInArray $intervals 15 -eq $true -and isInArray $intervals 20 -eq $false -and isInArray $intervals 25 -eq $false) {
+    if (Is-InArray $intervals 15 -eq $true -and Is-InArray $intervals 20 -eq $false -and Is-InArray $intervals 25 -eq $false) {
         return "m" # minor
     }
-    if (isInArray $intervals 10 -eq $true -and isInArray $intervals 15 -eq $false -and isInArray $intervals 20 -eq $false -and isInArray $intervals 25 -eq $false) {
+    if (Is-InArray $intervals 10 -eq $true -and Is-InArray $intervals 15 -eq $false -and Is-InArray $intervals 20 -eq $false -and Is-InArray $intervals 25 -eq $false) {
         return "sus2"
     }
-    if (isInArray $intervals 25 -eq $true -and isInArray $intervals 10 -eq $false -and isInArray $intervals 20 -eq $false -and isInArray $intervals 15 -eq $false) {
+    if (Is-InArray $intervals 25 -eq $true -and Is-InArray $intervals 10 -eq $false -and Is-InArray $intervals 20 -eq $false -and Is-InArray $intervals 15 -eq $false) {
         return "sus4"
     }
     return "(No3)"
 }
 
-Function is5($intervals) {
-    if (isInArray $intervals 35 -eq $true -and isInArray $intervals 30 -eq $false -and isInArray $intervals 40 -eq $false) {
+Function Is-5($intervals) {
+    if (Is-InArray $intervals 35 -eq $true -and Is-InArray $intervals 30 -eq $false -and Is-InArray $intervals 40 -eq $false) {
          return ""
     }
-    if (isInArray $intervals 30 -eq $true -and isInArray $intervals 35 -eq $false -and isInArray $intervals 40 -eq $false) {
+    if (Is-InArray $intervals 30 -eq $true -and Is-InArray $intervals 35 -eq $false -and Is-InArray $intervals 40 -eq $false) {
         return "dim5"
     }
-    if (isInArray $intervals 40 -eq $true -and isInArray $intervals 30 -eq $false -and isInArray $intervals 35 -eq $false) {
+    if (Is-InArray $intervals 40 -eq $true -and Is-InArray $intervals 30 -eq $false -and Is-InArray $intervals 35 -eq $false) {
         return "aug5"
     }
     return "(No5)"
 }
 
-Function is7($intervals) {
-    if (isInArray $intervals 45 -eq $true) {
+Function Is-7($intervals) {
+    if (Is-InArray $intervals 45 -eq $true) {
         return "/b7"
     }
-    if (isInArray $intervals 50 -eq $true) {
+    if (Is-InArray $intervals 50 -eq $true) {
         return "/7"
     }
-    if (isInArray $intervals 55 -eq $true) {
+    if (Is-InArray $intervals 55 -eq $true) {
         return "/maj7"
     }
     return ""
 }
 
-Function is9($intervals, $chord) {
-    if (isInArray $intervals 5 -eq $true) {
+Function Is-9($intervals, $chord) {
+    if (Is-InArray $intervals 5 -eq $true) {
         return "/b9";
     }
-    if (isInArray $intervals 10 -eq $true) {
+    if (Is-InArray $intervals 10 -eq $true) {
         if ($chord -NotMatch "sus2") {
             return "/9";
         }
@@ -177,8 +177,8 @@ Function is9($intervals, $chord) {
     return "";
 }
 
-Function is11($intervals, $chord) {
-    if (isInArray $intervals 25 -eq $true) {
+Function Is-11($intervals, $chord) {
+    if (Is-InArray $intervals 25 -eq $true) {
         if ($chord -NotMatch "sus4") {
             return "/11";
         }
@@ -186,8 +186,8 @@ Function is11($intervals, $chord) {
     return "";
 }
 
-Function is6($intervals, $chord) {
-    if (isInArray $intervals 40 -eq $true) {
+Function Is-6($intervals, $chord) {
+    if (Is-InArray $intervals 40 -eq $true) {
         if ($chord -NotMatch "aug5") {
             return "/6";
         }
@@ -195,17 +195,35 @@ Function is6($intervals, $chord) {
     return "";
 }
 
-$frets = readFrets
+
+# debug Function
+Function Dump-Intervals($intervals) {
+
+   Write-Host "`n[debug]Intervals:"
+   For ($i = 0; $i -lt $intervals.Length; $i++) {
+       $x = $intervals[$i] -Split ""
+       if (([int]$intervals[$i]) -lt 10) {
+           Write-Host ("0,"+$x[1]+"; ") -Nonewline
+       } else {
+           Write-Host ($x[1]+","+$x[2]+"; ") -Nonewline
+       }
+   }
+   Write-Host ""
+
+}
+
+$frets = Read-Frets
 #$frets = @(1,1,2,1,3,-1)
-$numNotes = fillFretNotes($frets)
-drawFrets($frets)
+$numNotes = Fill-FretNotes $frets
+Draw-Frets $frets
 
 $chords = @()
 for ($i = 0; $i -lt 6; $i++) {
     if ($numNotes[$i] -ne -1) {
-        $intervals = buildIntervals $numNotes $i
-        $rootNote = getNote $numNotes[$i] 
-        $chord = buildChord $intervals
+        $intervals = Build-Intervals $numNotes $i
+        Dump-Intervals $intervals
+        $rootNote = Get-Note $numNotes[$i] 
+        $chord = Build-Chord $intervals
         $chord = $rootNote + $chord
         $chords += $chord
     }    
@@ -215,4 +233,3 @@ Write-Output "`nChord names are:"
 foreach ($unique in $($chords | Sort-Object | Get-Unique)) {
     Write-Output $unique
 }
-
