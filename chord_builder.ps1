@@ -14,7 +14,7 @@ Function Read-Frets() {
         if ($x -eq "x") {
             $frets += -1
             $i++
-        } elseif (($x -ge 0) -and ($x -le 5)) {
+        } elseif ((([int]$x) -ge 0) -and (([int]$x) -le 5)) {
             $frets += [int]$x
             $i++
         } else {
@@ -43,7 +43,7 @@ Function Get-Note($note_no) {
     }
 }
 
-Function Fill-FretNotes($frets) {
+Function Initialize-FretNotes($frets) {
     $numNotes = @()
     for ($i = 0; $i -lt 6; $i++) {
         if ($frets[$i] -ne -1) {
@@ -55,7 +55,7 @@ Function Fill-FretNotes($frets) {
     return $numNotes
 }
 
-Function Build-Intervals($numNotes, $root) {
+Function Initialize-Intervals($numNotes, $root) {
     
     #param (
     #    $numNotes,
@@ -79,7 +79,7 @@ Function Build-Intervals($numNotes, $root) {
     return ($intervals | Sort-Object | Get-Unique)
 }
 
-Function Draw-Frets() {
+Function Show-Frets() {
 
     Write-Output "`n"
     for ($i = 0; $i -lt 6; $i++) {
@@ -103,7 +103,7 @@ Function Draw-Frets() {
     }
 }
 
-Function Is-InArray($array, $interval_value) {
+Function Test-InArray($array, $interval_value) {
     for ($i = 0; $i -lt 6; $i++) {
         if ($array[$i] -eq $interval_value) {
             return $true
@@ -112,64 +112,64 @@ Function Is-InArray($array, $interval_value) {
     return $false
 }
 
-Function Build-Chord($intervals) {
+Function Set-Chord($intervals) {
     $chord = ""
-    $chord += Is-3 $intervals
-    $chord += Is-5 $intervals
-    $chord += Is-7 $intervals
-    $chord += Is-9 $intervals $chord
-    $chord += Is-11 $intervals $chord
-    $chord += Is-6 $intervals $chord
+    $chord += Test-Is3 $intervals
+    $chord += Test-Is5 $intervals
+    $chord += Test-Is7 $intervals
+    $chord += Test-Is9 $intervals $chord
+    $chord += Test-Is11 $intervals $chord
+    $chord += Test-Is6 $intervals $chord
     return $chord    
 }
 
-Function Is-3($intervals) {
-    if (Is-InArray $intervals 20 -eq $true -and Is-InArray $intervals 15 -eq $false -and Is-InArray $intervals 25 -eq $false) {
+Function Test-Is3($intervals) {
+    if (Test-InArray $intervals 20 -eq $true -and Test-InArray $intervals 15 -eq $false -and Test-InArray $intervals 25 -eq $false) {
         return "" # major
     }
-    if (Is-InArray $intervals 15 -eq $true -and Is-InArray $intervals 20 -eq $false -and Is-InArray $intervals 25 -eq $false) {
+    if (Test-InArray $intervals 15 -eq $true -and Test-InArray $intervals 20 -eq $false -and Test-InArray $intervals 25 -eq $false) {
         return "m" # minor
     }
-    if (Is-InArray $intervals 10 -eq $true -and Is-InArray $intervals 15 -eq $false -and Is-InArray $intervals 20 -eq $false -and Is-InArray $intervals 25 -eq $false) {
+    if (Test-InArray $intervals 10 -eq $true -and Test-InArray $intervals 15 -eq $false -and Test-InArray $intervals 20 -eq $false -and Test-InArray $intervals 25 -eq $false) {
         return "sus2"
     }
-    if (Is-InArray $intervals 25 -eq $true -and Is-InArray $intervals 10 -eq $false -and Is-InArray $intervals 20 -eq $false -and Is-InArray $intervals 15 -eq $false) {
+    if (Test-InArray $intervals 25 -eq $true -and Test-InArray $intervals 10 -eq $false -and Test-InArray $intervals 20 -eq $false -and Test-InArray $intervals 15 -eq $false) {
         return "sus4"
     }
     return "(No3)"
 }
 
-Function Is-5($intervals) {
-    if (Is-InArray $intervals 35 -eq $true -and Is-InArray $intervals 30 -eq $false -and Is-InArray $intervals 40 -eq $false) {
+Function Test-Is5($intervals) {
+    if (Test-InArray $intervals 35 -eq $true -and Test-InArray $intervals 30 -eq $false -and Test-InArray $intervals 40 -eq $false) {
          return ""
     }
-    if (Is-InArray $intervals 30 -eq $true -and Is-InArray $intervals 35 -eq $false -and Is-InArray $intervals 40 -eq $false) {
+    if (Test-InArray $intervals 30 -eq $true -and Test-InArray $intervals 35 -eq $false -and Test-InArray $intervals 40 -eq $false) {
         return "dim5"
     }
-    if (Is-InArray $intervals 40 -eq $true -and Is-InArray $intervals 30 -eq $false -and Is-InArray $intervals 35 -eq $false) {
+    if (Test-InArray $intervals 40 -eq $true -and Test-InArray $intervals 30 -eq $false -and Test-InArray $intervals 35 -eq $false) {
         return "aug5"
     }
     return "(No5)"
 }
 
-Function Is-7($intervals) {
-    if (Is-InArray $intervals 45 -eq $true) {
+Function Test-Is7($intervals) {
+    if (Test-InArray $intervals 45 -eq $true) {
         return "/b7"
     }
-    if (Is-InArray $intervals 50 -eq $true) {
+    if (Test-InArray $intervals 50 -eq $true) {
         return "/7"
     }
-    if (Is-InArray $intervals 55 -eq $true) {
+    if (Test-InArray $intervals 55 -eq $true) {
         return "/maj7"
     }
     return ""
 }
 
-Function Is-9($intervals, $chord) {
-    if (Is-InArray $intervals 5 -eq $true) {
+Function Test-Is9($intervals, $chord) {
+    if (Test-InArray $intervals 5 -eq $true) {
         return "/b9";
     }
-    if (Is-InArray $intervals 10 -eq $true) {
+    if (Test-InArray $intervals 10 -eq $true) {
         if ($chord -NotMatch "sus2") {
             return "/9";
         }
@@ -177,8 +177,8 @@ Function Is-9($intervals, $chord) {
     return "";
 }
 
-Function Is-11($intervals, $chord) {
-    if (Is-InArray $intervals 25 -eq $true) {
+Function Test-Is11($intervals, $chord) {
+    if (Test-InArray $intervals 25 -eq $true) {
         if ($chord -NotMatch "sus4") {
             return "/11";
         }
@@ -186,8 +186,8 @@ Function Is-11($intervals, $chord) {
     return "";
 }
 
-Function Is-6($intervals, $chord) {
-    if (Is-InArray $intervals 40 -eq $true) {
+Function Test-Is6($intervals, $chord) {
+    if (Test-InArray $intervals 40 -eq $true) {
         if ($chord -NotMatch "aug5") {
             return "/6";
         }
@@ -197,7 +197,7 @@ Function Is-6($intervals, $chord) {
 
 
 # debug Function
-Function Dump-Intervals($intervals) {
+Function Show-Intervals($intervals) {
 
    Write-Host "`n[debug]Intervals:"
    For ($i = 0; $i -lt $intervals.Length; $i++) {
@@ -214,16 +214,16 @@ Function Dump-Intervals($intervals) {
 
 $frets = Read-Frets
 #$frets = @(1,1,2,1,3,-1)
-$numNotes = Fill-FretNotes $frets
-Draw-Frets $frets
+$numNotes = Initialize-FretNotes $frets
+Show-Frets $frets
 
 $chords = @()
 for ($i = 0; $i -lt 6; $i++) {
     if ($numNotes[$i] -ne -1) {
-        $intervals = Build-Intervals $numNotes $i
-        Dump-Intervals $intervals
+        $intervals = Initialize-Intervals $numNotes $i
+        Show-Intervals $intervals
         $rootNote = Get-Note $numNotes[$i] 
-        $chord = Build-Chord $intervals
+        $chord = Set-Chord $intervals
         $chord = $rootNote + $chord
         $chords += $chord
     }    
