@@ -10,16 +10,7 @@ public class Chords {
         {45, 50, 55, 0,   5, 10, -1},
         {20, 25, 30, 35, 40, 45, -1}
     };
-/* 
-    String[][] FRETS = new String[][] {
-            {"E", "F", "F#", "G", "G#", "A", "x"},
-            {"B", "C", "C#", "D", "D#", "E", "x"},
-            {"G", "G#", "A", "A#", "B", "C", "x"},
-            {"D", "D#", "E", "F", "F#", "G", "x"},
-            {"A", "A#", "B", "C", "C#", "D", "x"},
-            {"E", "F", "F#", "G", "G#", "A", "x"}
-    };
-*/
+    
     private int[] fretNums = new int[6];
     private int[] fretNote = new int[6];
     private String[] chordNames = new String[6]; 
@@ -29,7 +20,7 @@ public class Chords {
         int STR_NUM = 6;
         int i = 1;
         int r;
-        System.out.println("Enter frets for the strings. 'x' means the string is muted.");
+        System.out.println("Enter frets for the strings. 'x' means the string does not sound.");
         System.out.print("Fret #" + i + ": ");
         do {
             r = System.in.read();
@@ -62,15 +53,14 @@ public class Chords {
     public int drawFrets() {
         // draws the chord
         String chordLine;
-        String note;
         System.out.println("");
 
         for (int j = 1; j <= 6; j++) {
-            chordLine = fretNums[j-1] + "||";
+            chordLine = fretNums[j-1] + "|";
             if (fretNums[j-1] == 6) {
-                chordLine = "X||---|---|---|---|---|";
+                chordLine = "X|---|---|---|---|---|";
             } else if (fretNums[j-1] == 0) {
-                chordLine = "o||---|---|---|---|---|";
+                chordLine = "o|---|---|---|---|---|";
             } else {
                 for (int k = 1; k < 6; k++) {
                     if (k == fretNums[j-1]) {
@@ -80,11 +70,7 @@ public class Chords {
                     }
                 }
             }
-            note = this.convRoot2Note(STRINGS[j-1][fretNums[j-1]]);
-            if (note == "(Oops)") {
-                note = "x";
-            }
-            System.out.println(chordLine + "- " + note);
+            System.out.println(chordLine + "-");
         }
         return 0;
     }
@@ -103,16 +89,16 @@ public class Chords {
     // iterates thru strings and builds chords for each string as a root
         int i;
         String chordName;
-        ArrayList<String> chordNamesList = new ArrayList<String>();
+        ArrayList<String> chordNames = new ArrayList<String>();
 
         for (i = 0; i < 6; i++) {
             chordName = this.calcChord(i);
-            if (!chordNamesList.contains(chordName)) {
-                chordNamesList.add(chordName);
+            if (!chordNames.contains(chordName)) {
+                chordNames.add(chordName);
             }
         }
         System.out.println("\nPossible chords are:");
-        for (String s: chordNamesList) {
+        for (String s: chordNames) {
             if (s.indexOf("(Oops)") < 0) {
                 System.out.println(s);
             }    
@@ -184,14 +170,14 @@ public class Chords {
 
     public String is3(int[] intervals) {
         if ((isInArray(intervals, 20) == true) 
-        //&& (isInArray(intervals, 10) == false) 
+        && (isInArray(intervals, 10) == false) 
         && (isInArray(intervals, 15) == false)
         && (isInArray(intervals, 25) == false)
         ) {
             return ""; // major
         }
         if ((isInArray(intervals, 15) == true) 
-        //&& (isInArray(intervals, 10) == false) 
+        && (isInArray(intervals, 10) == false) 
         && (isInArray(intervals, 20) == false)
         && (isInArray(intervals, 25) == false)
         ) {
